@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(leve
 
 logging.debug("Starting the program")
 logging.debug("Loading the environment variables")
-#Load the environment variables
+# Load the environment variables
 load_dotenv("config.env")
 
 API_KEY = os.getenv('API_KEY')
@@ -34,7 +34,6 @@ OUTPUT_PATH = Path(__file__).parent / "output"
 
 logging.debug("Checking if the required directories exist")
 
-
 ''' Init the required directories if they don't exist
 ./tmp
 ./output
@@ -45,21 +44,21 @@ if not os.path.exists(MAIN_PATH / TMP_FOLDER):
 if not os.path.exists(MAIN_PATH / "output"):
     logging.debug("Creating the output folder")
     os.mkdir(MAIN_PATH / "output")
-#delete files if there are any in tmp
+# delete files if there are any in tmp
 
 logging.debug("Checking if there are any files in the tmp folder")
 for filename in os.listdir(MAIN_PATH / TMP_FOLDER):
     logging.debug("Deleting the file in the tmp folder")
     os.remove(MAIN_PATH / TMP_FOLDER / filename)
 
-#I have added this specific line of code to make the program work on windows.
-#This is because the program was not able to find the tcl and tk libraries.
-#For the moment, this should work fine, but if you have any issues, please let me know.
+# I have added this specific line of code to make the program work on windows.
+# This is because the program was not able to find the tcl and tk libraries.
+# For the moment, this should work fine, but if you have any issues, please let me know.
 if os.name == 'nt':
     logging.debug("Setting up the required environment variables for Windows")
-    #get the appdata local path
+    # get the appdata local path
     appdata_local = os.getenv('LOCALAPPDATA')
-    #check if path exists "\\Programs\\Python\\Python310\\tcl\\tcl8.6"
+    # check if path exists "\\Programs\\Python\\Python310\\tcl\\tcl8.6"
     if os.path.exists(appdata_local + "\\Programs\\Python\\Python310\\tcl\\tcl8.6"):
         os.environ['TCL_LIBRARY'] = appdata_local + "\\Programs\\Python\\Python310\\tcl\\tcl8.6"
         os.environ['TK_LIBRARY'] = appdata_local + "\\Programs\\Python\\Python310\\tcl\\tk8.6"
@@ -73,14 +72,11 @@ if os.name == 'nt':
         os.environ['TCL_LIBRARY'] = appdata_local + "\\Programs\\Python\\Python37\\tcl\\tcl8.6"
         os.environ['TK_LIBRARY'] = appdata_local + "\\Programs\\Python\\Python37\\tcl\\tk8.6"
 
-
-
 # initialize global variables
 selected_file = None
 txt_select_1 = None
 txt_select_2 = None
 progress_bar = None
-
 
 
 # function to get the path of the assets folder
@@ -133,7 +129,7 @@ main_canvas.create_text(
     122.0,
     anchor="nw",
     text="Convert your study material to flashcards",
-    fill="#000000",
+    fill="red",
     font=("Inter", 25 * -1)
 )
 # create DnD field
@@ -169,7 +165,7 @@ info_box = Canvas(
 info_box.place(x=0, y=160)
 
 txt_select_1 = info_box.create_text(
-    70,
+    30,
     0,
     anchor="nw",
     text="Select a file or drag and drop here",
@@ -323,10 +319,11 @@ radio_btn_3 = tk.Radiobutton(
 )
 radio_btn_3.place(x=423.0, y=684.0)
 
+
 # function to handle the drop event
 def on_drop(event):
     file_path = event.data
-    if(check_file(file_path) == False):
+    if (check_file(file_path) == False):
         return
 
     file_name = os.path.basename(file_path)
@@ -361,16 +358,17 @@ def on_drop(event):
     logging.debug(f"Main path: {MAIN_PATH}")
     logging.debug(f"Assets path: {ASSETS_PATH}")
 
+
 # function to handle the file selection
 def select_file():
     file_path = filedialog.askopenfilename(title="Select a file")
 
-    #Check if the file selection is aborted
+    # Check if the file selection is aborted
     if not file_path:
         logging.debug("File selection aborted")
 
-    #Default file Check
-    if(check_file(file_path) == False):
+    # Default file Check
+    if (check_file(file_path) == False):
         return
 
     file_name = os.path.basename(file_path)
@@ -398,17 +396,17 @@ def select_file():
         font=("Inter", adjust_font_size() * -1)
     )
 
-
     logging.debug(f"Selected file path: {file_path}")
     clear_button.config(image=img_clear_clickable)
     convert_button.config(command=lambda: convert_file())
     logging.debug("File selected from the file dialog")
 
+
 # function to open the file from the file preview
 def open_file():
     try:
         logging.debug("Opening the file")
-        #check if file contains illegal characters
+        # check if file contains illegal characters
         if re.search(r'[!@#$%^&*()+=\[\]\\\'\';,./{}|\":<>?~]', selected_file):
             logging.debug("File contains illegal characters")
             return
@@ -418,6 +416,7 @@ def open_file():
             os.system(f'open "{selected_file}"')
     except Exception as e:
         logging.error(f"Error opening file: {e}")
+
 
 # function to check the file properties
 def check_file(file_path):
@@ -450,6 +449,7 @@ def check_file(file_path):
     logging.debug("File is OK!")
     return True
 
+
 # function to adjust the font size of the file name based on the length of the file name
 def adjust_font_size():
     text_name = os.path.basename(selected_file)
@@ -463,6 +463,7 @@ def adjust_font_size():
 
     return int(font_size)
 
+
 # function to show the tooltip
 def show_tooltip():
     while True:
@@ -472,6 +473,7 @@ def show_tooltip():
         else:
             tooltip.place_forget()
             break
+
 
 # function to hide the tooltip
 def hide_tooltip():
@@ -484,6 +486,7 @@ def on_radiobutton_selected(value):
     if value != 0:
         convert_button.config(image=img_convert_clickable)
     return value
+
 
 # function to clear the selection
 def clear_selection():
@@ -515,9 +518,9 @@ def clear_selection():
 
     radio_var.set(0)
 
+
 # function to start the conversion process
 def convert_file():
-
     if on_radiobutton_selected(radio_var.get()) == 0:
         logging.debug("No conversion option selected!")
         return
@@ -532,9 +535,9 @@ def convert_file():
     conversion_thread = Thread(target=perform_conversion)
     conversion_thread.start()
 
+
 # function to perform the conversion
 def perform_conversion():
-
     try:
 
         pdf_convert = PDFConverter()
@@ -582,7 +585,7 @@ def check_api_key():
     if api_key is None or api_key.strip() == "":
         # API key is not set, prompt the user to enter it
         logging.debug("API key not found. Prompting the user to enter it.")
-        user_api_key = tk.simpledialog.askstring("API Key", "Please enter your API Key:")
+        user_api_key = tk.simpledialog.askstring("API Key", "Please enter your API Key: \t\t\t ")
         if user_api_key is not None and user_api_key.strip() != "":
             os.environ['API_KEY'] = user_api_key
         else:
@@ -591,6 +594,7 @@ def check_api_key():
             window.destroy()
             return False
     return True
+
 
 # function to initialize the progress bar
 def init_progress_bar():
@@ -613,14 +617,15 @@ def init_progress_bar():
                                    style="TProgressbar")
     logging.debug("Progress bar initialized")
 
+
 # function to run the application
 def run():
-
     if not check_api_key():
         return
 
     window.resizable(True, True)
     window.mainloop()
+
 
 if __name__ == "__main__":
     run()
